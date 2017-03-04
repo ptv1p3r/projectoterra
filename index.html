@@ -15,13 +15,13 @@
 <script>
 
     var WIDTH = window.innerWidth,
-        HEIGHT = window.innerHeight,
+        HEIGHT = window.innerHeight-4,
         VIEW_ANGLE = 45,
         ASPECT = WIDTH / HEIGHT,
         NEAR = 0.1,
         FAR = 10000,
         DISTANCIA = 1000;
-    var scene, renderer, camera, earthMesh, controls, text2;
+    var scene, renderer, camera, earthMesh, controls, text2, material;
 
     init();
     animate();
@@ -63,7 +63,7 @@
         var geometry = new THREE.SphereGeometry(175,32,32);
 
         //var material = new THREE.MeshLambertMaterial({color: 0xF3FFE2});
-        var material = new THREE.MeshPhongMaterial();
+        material = new THREE.MeshPhongMaterial();
         material.map = THREE.ImageUtils.loadTexture('resources/earthmap1k.jpg');            // Diffuse Texture
         material.bumpMap = THREE.ImageUtils.loadTexture('resources/earthbump1k.jpg');       // Bump Texture
         material.bumpScale = 0.05;
@@ -111,11 +111,15 @@
         text2.style.left = 200 + 'px';
 
         var btn = document.createElement("button");        // Create a <button> element
-        var t = document.createTextNode("CLICK ME");
+        var t = document.createTextNode("City Lights");
         btn.appendChild(t);
         btn.style.position = 'absolute';
-        btn.style.top = 200 + 'px';
-        btn.style.left = 400 + 'px';
+        btn.style.top = 10 + 'px';
+        btn.style.left = 800 + 'px';
+        btn.onclick = function() { // Note this is a function
+            earthMesh.material.map = THREE.ImageUtils.loadTexture('resources/earthlights1k.jpg' );
+            earthMesh.material.needsUpdate = true;
+        };
 
         document.body.appendChild(btn);
         document.body.appendChild(text2);
@@ -151,7 +155,6 @@
         renderer.setSize( window.innerWidth, window.innerHeight );
         render();
     }
-
 
 </script>
 
