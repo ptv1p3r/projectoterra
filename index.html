@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Projecto Terra em threejs</title>
+    <style>
+        body { margin: 0; }
+        canvas { width: 100%; height: 100% }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas"></canvas>
+<script src="js/three.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script>
+
+    var WIDTH = window.innerWidth,
+        HEIGHT = window.innerHeight,
+        VIEW_ANGLE = 45,
+        ASPECT = WIDTH / HEIGHT,
+        NEAR = 0.1,
+        FAR = 10000,
+        DISTANCIA = 1000;
+    var scene, renderer, camera, earthMesh, controls, text2;
+
+    init();
+    animate();
+
+
+    /**
+     * Metodo que inicializa todos os objectos
+     */
+    function init(){
+        //SCENE
+        scene = new THREE.Scene();
+
+        //CAMERA
+        camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+        camera.position.set(0, 100, DISTANCIA);
+        camera.lookAt(scene.position);
+
+        controls = new THREE.OrbitControls(camera); // adiciona a camera aos controles do rato
+        controls.maxDistance = DISTANCIA;
+
+        controls.addEventListener( 'change', render );
+
+        //RENDERER
+        renderer = new THREE.WebGLRenderer({canvas: document.getElementById('myCanvas'), antialias: true});
+        renderer.setClearColor(0x000000);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(WIDTH, HEIGHT);
+        document.body.appendChild(renderer.domElement);
+
+        //LIGHTS
+        var light = new THREE.AmbientLight(0xffffff, 1.0);
+        scene.add(light);
+
+        var light1 = new THREE.PointLight(0xffffff, 0.5);
+        //scene.add(light1);
+
+        //OBJECT
+        //var geometry = new THREE.CubeGeometry(100, 100, 100);
+        var geometry = new THREE.SphereGeometry(175,32,32);
+
+        //var material = new THREE.MeshLambertMaterial({color: 0xF3FFE2});
+        var material = new THREE.MeshPhongMaterial();
+        material.map = THREE.ImageUtils.loadTexture('resources/earthmap1k.jpg');            // Diffuse Texture
+        material.bumpMap = THREE.ImageUtils.loadTexture('resources/earthbump1k.jpg');       // Bump Texture
+        material.bumpScale = 0.05;
+        material.specularMap = THREE.ImageUtils.loadTexture('resources/earthspec1k.jpg');   // Spectacular Texture
+        material.specular = new THREE.Color('grey');
+        earthMesh = new THREE.Mesh(geometry, material);
+
+
+        var geometry1   = new THREE.SphereGeometry(175, 32, 32);
+        var material1  = new THREE.MeshPhongMaterial({
+            map         : new THREE.ImageUtils.loadTexture('resources/earthcloudmap2.jpg'), //THREE.ImageUtils.loadTexture('resources/earthcloudmap.jpg'),
+            side        : THREE.DoubleSide,
+            opacity     : 0.3,
+            transparent : true,
+            depthWrite  : false
+        });
+        var cloudMesh = new THREE.Mesh(geometry1, material1);
+
+        earthMesh.add(cloudMesh);
+        //scene.add(earthMesh);
+
+        // create the geometry sphere
+        var geometry2  = new THREE.SphereGeometry(1000, 32, 32);
+        var material2  = new THREE.MeshBasicMaterial({  // create the material, using a texture of startfield
+            map   : new THREE.ImageUtils.loadTexture('resources/space.jpg'),
+            side  : THREE.BackSide
+        });
+        // create the mesh based on geometry and material
+        var mesh  = new THREE.Mesh(geometry2, material2);
+
+        //earthMesh.add(mesh);
+        scene.add(mesh);
+        scene.add(earthMesh);
+
+        window.addEventListener( 'resize', onWindowResize, false );
+
+        text2 = document.createElement('div');
+        text2.style.position = 'absolute';
+        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        text2.style.width = 100;
+        text2.style.height = 100;
+        text2.style.backgroundColor = "blue";
+        text2.innerHTML = "hi there!";
+        text2.style.top = 200 + 'px';
+        text2.style.left = 200 + 'px';
+
+        var btn = document.createElement("button");        // Create a <button> element
+        var t = document.createTextNode("CLICK ME");
+        btn.appendChild(t);
+        btn.style.position = 'absolute';
+        btn.style.top = 200 + 'px';
+        btn.style.left = 400 + 'px';
+
+        document.body.appendChild(btn);
+        document.body.appendChild(text2);
+
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        if (text2.textContent)
+            text2.textContent = earthMesh.rotation.y;
+        else if (text2.innerText)
+            text2.innerText = earthMesh.rotation.y;
+        else
+            text2.innerHTML = earthMesh.rotation.y;
+
+        earthMesh.rotation.y += 0.01;
+        controls.update();
+
+        render();
+    }
+
+    /**
+     * Metodo Render
+     */
+    function render() {
+        renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        render();
+    }
+
+
+</script>
+
+</body>
+</html>
