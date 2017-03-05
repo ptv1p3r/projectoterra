@@ -21,7 +21,7 @@
         NEAR = 0.1,
         FAR = 10000,
         DISTANCIA = 1000;
-    var scene, renderer, camera, earthMesh, controls, text2, material;
+    var scene, renderer, camera, earthMesh, controls, text2, material, bolCityLightsON=false;
 
     init();
     animate();
@@ -110,6 +110,17 @@
         text2.style.top = 200 + 'px';
         text2.style.left = 200 + 'px';
 
+        text3 = document.createElement('div');
+        text3.style.position = 'absolute';
+        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        text3.style.width = 100;
+        text3.style.height = 100;
+        text3.style.backgroundColor = "transparent";
+        text3.style.color ="red";
+        text3.innerHTML = "OFF";
+        text3.style.top = 12 + 'px';
+        text3.style.left = 880 + 'px';
+
         var btn = document.createElement("button");        // Create a <button> element
         var t = document.createTextNode("City Lights");
         btn.appendChild(t);
@@ -117,12 +128,25 @@
         btn.style.top = 10 + 'px';
         btn.style.left = 800 + 'px';
         btn.onclick = function() { // Note this is a function
-            earthMesh.material.map = THREE.ImageUtils.loadTexture('resources/earthlights1k.jpg' );
+
+            if (bolCityLightsON){
+                earthMesh.material.map = THREE.ImageUtils.loadTexture('resources/earthlights1k.jpg');
+                text3.style.color ="lightgreen";
+                text3.innerHTML = "ON";
+            } else {
+                earthMesh.material.map = THREE.ImageUtils.loadTexture('resources/earthmap1k.jpg');
+                text3.style.color ="red";
+                text3.innerHTML = "OFF";
+            }
+
+            bolCityLightsON = !bolCityLightsON;
+
             earthMesh.material.needsUpdate = true;
         };
 
         document.body.appendChild(btn);
         document.body.appendChild(text2);
+        document.body.appendChild(text3);
 
     }
 
@@ -157,6 +181,5 @@
     }
 
 </script>
-
 </body>
 </html>
