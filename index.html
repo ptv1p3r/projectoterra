@@ -160,7 +160,12 @@
         else
             text2.innerHTML = earthMesh.rotation.y;
 
-        earthMesh.rotation.y += 0.01;
+        //earthMesh.rotation.y += 0.01;
+
+        earthMesh.rotation.y = Date.now() * -0.0001;
+        //earthMesh.position.x = Math.sin( Date.now() * 0.001 ) * 219.15;
+        //earthMesh.position.z = Math.cos( Date.now() * 0.001 ) * 219.15;
+
         controls.update();
 
         render();
