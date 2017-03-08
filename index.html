@@ -20,7 +20,7 @@
         ASPECT = WIDTH / HEIGHT,
         NEAR = 0.1,
         FAR = 10000,
-        DISTANCIA = 1000;
+        DISTANCIA_MAX = 1000;
     var scene, renderer, camera, cloudMesh, earthMesh, controls, text2, material, bolCityLightsON=false;
 
     init();
@@ -36,11 +36,13 @@
 
         //CAMERA
         camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-        camera.position.set(0, 100, DISTANCIA);
+        camera.position.set(0, 100, DISTANCIA_MAX);
         camera.lookAt(scene.position);
 
         controls = new THREE.OrbitControls(camera); // adiciona a camera aos controles do rato
-        controls.maxDistance = DISTANCIA;
+        controls.maxDistance = DISTANCIA_MAX;
+        controls.minDistance = 150;
+
 
         controls.addEventListener( 'change', render );
 
