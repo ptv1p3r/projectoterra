@@ -21,7 +21,7 @@
         NEAR = 0.1,
         FAR = 10000,
         DISTANCIA = 1000;
-    var scene, renderer, camera, earthMesh, controls, text2, material, bolCityLightsON=false;
+    var scene, renderer, camera, cloudMesh, earthMesh, controls, text2, material, bolCityLightsON=false;
 
     init();
     animate();
@@ -72,7 +72,7 @@
         earthMesh = new THREE.Mesh(geometry, material);
 
 
-        var geometry1   = new THREE.SphereGeometry(175, 32, 32);
+        var geometry1   = new THREE.SphereGeometry(177, 32, 32);
         var material1  = new THREE.MeshPhongMaterial({
             map         : new THREE.ImageUtils.loadTexture('resources/earthcloudmap2.jpg'),
             side        : THREE.DoubleSide,
@@ -80,18 +80,18 @@
             transparent : true,
             depthWrite  : false
         });
-        var cloudMesh = new THREE.Mesh(geometry1, material1);
+         cloudMesh = new THREE.Mesh(geometry1, material1);
 
         earthMesh.add(cloudMesh);
-        //scene.add(earthMesh);
+        scene.add(earthMesh);
 
-        // create the geometry sphere
+        // SKYBOX
         var geometry2  = new THREE.SphereGeometry(1000, 32, 32);
-        var material2  = new THREE.MeshBasicMaterial({  // create the material, using a texture of startfield
-            map   : new THREE.ImageUtils.loadTexture('resources/space.jpg'),
+        var material2  = new THREE.MeshBasicMaterial({
+            map   : new THREE.ImageUtils.loadTexture('resources/skybox1.jpg'),
             side  : THREE.BackSide
         });
-        // create the mesh based on geometry and material
+        // cria mesh com geometria e material
         var mesh  = new THREE.Mesh(geometry2, material2);
 
         //earthMesh.add(mesh);
@@ -102,17 +102,17 @@
 
         text2 = document.createElement('div');
         text2.style.position = 'absolute';
-        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        //text2.style.zIndex = 1;
         text2.style.width = 100;
         text2.style.height = 100;
         text2.style.backgroundColor = "blue";
-        text2.innerHTML = "hi there!";
-        text2.style.top = 200 + 'px';
-        text2.style.left = 200 + 'px';
+        text2.innerHTML = "yoooo!";
+        text2.style.top = 40 + 'px';
+        text2.style.left = 800 + 'px';
 
         text3 = document.createElement('div');
         text3.style.position = 'absolute';
-        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        //text2.style.zIndex = 1;
         text3.style.width = 100;
         text3.style.height = 100;
         text3.style.backgroundColor = "transparent";
@@ -121,13 +121,14 @@
         text3.style.top = 12 + 'px';
         text3.style.left = 880 + 'px';
 
-        var btn = document.createElement("button");        // Create a <button> element
+        // butao city lights
+        var btn = document.createElement("button");
         var t = document.createTextNode("City Lights");
         btn.appendChild(t);
         btn.style.position = 'absolute';
         btn.style.top = 10 + 'px';
         btn.style.left = 800 + 'px';
-        btn.onclick = function() { // Note this is a function
+        btn.onclick = function() {
 
             if (bolCityLightsON){
                 earthMesh.material.map = THREE.ImageUtils.loadTexture('resources/earthlights1k.jpg');
@@ -141,6 +142,7 @@
 
             bolCityLightsON = !bolCityLightsON;
 
+            //cloudMesh.material.needsUpdate = true;
             earthMesh.material.needsUpdate = true;
         };
 
@@ -161,8 +163,9 @@
             text2.innerHTML = earthMesh.rotation.y;
 
         //earthMesh.rotation.y += 0.01;
-
+        //cloudMesh.rotation.y += 100;
         earthMesh.rotation.y = Date.now() * -0.0001;
+        cloudMesh.rotation.y = Date.now() * -0.001;
         //earthMesh.position.x = Math.sin( Date.now() * 0.001 ) * 219.15;
         //earthMesh.position.z = Math.cos( Date.now() * 0.001 ) * 219.15;
 
@@ -175,7 +178,10 @@
      * Metodo Render
      */
     function render() {
+        //renderer.clear();
+        //renderer.clearDepth();
         renderer.render(scene, camera);
+
     }
 
     function onWindowResize() {
